@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:zesty_chef/conf/config.inc.dart';
+import 'package:zesty_chef/scoped_model/chef_menu_model.dart';
 
-import 'package:zesty_chef/scoped_model/meal_model.dart';
 import 'package:zesty_chef/widgets/star_rating.dart';
 
 import '../service_locator.dart';
@@ -16,35 +16,37 @@ class HomePage extends StatefulWidget {
   _NavBarState createState() => _NavBarState();
 }
 
-class _NavBarState extends State<HomePage> {
+class _NavBarState extends State<HomePage> 
+with AutomaticKeepAliveClientMixin<HomePage> {
+  bool keepAlive = false;
   Conf config = new Conf();
-  MealModel mealModel;
+  ChefMenuModel chefMenuModel;
   @override
   void initState() {
     // 初始化数据
     super.initState();
-    mealModel = locator<MealModel>();
-    mealModel.fetchMeals();
+    chefMenuModel = locator<ChefMenuModel>();
+    chefMenuModel.fetchMeals();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<MealModel>(
-      model: mealModel,
+    return ScopedModel<ChefMenuModel>(
+      model: chefMenuModel,
       child: ScopedModelDescendant(
-        builder: (BuildContext context, Widget child, MealModel model) {
+        builder: (BuildContext context, Widget child, ChefMenuModel model) {
           Widget content = Text('No meals');
           if (model.isLoading) {
             content = Center(
               child: CircularProgressIndicator(),
             );
-          } else if (!model.isLoading && model.meals.length > 0) {
+          } else if (!model.isLoading && model.chefMenus.length > 0) {
             content = _buildHomeBody(model);
-            // keepAlive = true;
-            // updateKeepAlive();
-          } else if (!model.isLoading && model.meals.length == 0) {
-            // keepAlive = false;
-            // updateKeepAlive();
+            keepAlive = true;
+            updateKeepAlive();
+          } else if (!model.isLoading && model.chefMenus.length == 0) {
+            keepAlive = false;
+            updateKeepAlive();
           }
           return content;
         },
@@ -52,7 +54,7 @@ class _NavBarState extends State<HomePage> {
     );
   }
 
-  Widget _buildHomeBody(MealModel model) {
+  Widget _buildHomeBody(ChefMenuModel model) {
     return Scaffold(
       backgroundColor: HexColor('#F1F1F1'),
       body: SingleChildScrollView(
@@ -74,7 +76,7 @@ class _NavBarState extends State<HomePage> {
                       CircleAvatar(
                         radius: 46,
                         backgroundImage: NetworkImage(
-                          'http://163.17.135.152/Zesty/storage/app/chef/test.jpg',
+                          config.imagePath + model.chefMenus[0].chefImage,
                         ),
                       ),
                       Spacer(),
@@ -94,12 +96,12 @@ class _NavBarState extends State<HomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '主廚名稱',
+                        model.chefMenus[0].chefName,
                         style:
                             TextStyle(fontSize: 20, color: HexColor('#575757')),
                       ),
-                      Text('綽號'),
-                      Text('介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹介紹'),
+                      Text(model.chefMenus[0].chefName),
+                      Text(model.chefMenus[0].chefIntro),
                     ],
                   ),
                 ),
@@ -132,16 +134,17 @@ class _NavBarState extends State<HomePage> {
                   physics: NeverScrollableScrollPhysics(),
                   padding: EdgeInsets.all(0),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      childAspectRatio: 1,
-                      ),
-                  itemCount: model.meals.length,
+                    crossAxisCount: 3,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: model.chefMenus[0].menu.length,
                   itemBuilder: (context, index) {
                     return Card(
                       child: Container(
                         child: Image.network(
                           config.imagePath +
-                              model.meals[index].menuDetails[0].path,
+                              model
+                                  .chefMenus[0].menu[index].menuDetails[0].path,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -153,6 +156,10 @@ class _NavBarState extends State<HomePage> {
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => keepAlive;
 
   // void _retrieveIcons() {
   //   Future.delayed(Duration(milliseconds: 200)).then((e) {

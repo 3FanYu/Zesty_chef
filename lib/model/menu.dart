@@ -1,4 +1,4 @@
-class Meal {
+class Menu {
   final int id;
   final String name;
   final int maximumPeople;
@@ -7,7 +7,7 @@ class Meal {
   final int stars;
   final List<MenuDetail> menuDetails;
 
-  Meal({
+  Menu({
     this.id,
     this.name,
     this.maximumPeople,
@@ -16,6 +16,18 @@ class Meal {
     this.stars,
     this.menuDetails,
   });
+  factory Menu.fromJson(Map<String, dynamic> parsedJson) {
+    return Menu(
+        id: parsedJson['id'],
+        name: parsedJson['name'],
+        maximumPeople: parsedJson['maximum_people'],
+        minimumPeople: parsedJson['minimum_people'],
+        price: parsedJson['price'],
+        stars: parsedJson['stars'],
+        menuDetails: List<MenuDetail>.from(
+                  parsedJson['menu_details'].map((x) => MenuDetail.fromJson(x))),
+        );
+  }
 }
 
 class MenuDetail {
