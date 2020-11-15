@@ -16,8 +16,8 @@ class HomePage extends StatefulWidget {
   _NavBarState createState() => _NavBarState();
 }
 
-class _NavBarState extends State<HomePage> 
-with AutomaticKeepAliveClientMixin<HomePage> {
+class _NavBarState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin<HomePage> {
   bool keepAlive = false;
   Conf config = new Conf();
   ChefMenuModel chefMenuModel;
@@ -119,37 +119,30 @@ with AutomaticKeepAliveClientMixin<HomePage> {
                   Container(
                     alignment: Alignment.centerRight,
                     child: IconButton(
-                      icon: Icon(Icons.add),
-                      onPressed: () {
-                        print('add');
-                      },
-                    ),
+                        icon: Icon(Icons.add),
+                        onPressed: () {
+                        }),
                   ),
                 ],
               ),
             ),
             Container(
               child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.all(0),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 1,
-                  ),
-                  itemCount: model.chefMenus[0].menu.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: Container(
-                        child: Image.network(
-                          config.imagePath +
-                              model
-                                  .chefMenus[0].menu[index].menuDetails[0].path,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    );
-                  }),
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.all(0),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: 1,
+                ),
+                itemCount: model.chefMenus[0].menu.length,
+                itemBuilder: (context, index) {
+                  return MenuCard(
+                    img: config.imagePath +
+                        model.chefMenus[0].menu[index].img,
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -160,19 +153,4 @@ with AutomaticKeepAliveClientMixin<HomePage> {
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => keepAlive;
-
-  // void _retrieveIcons() {
-  //   Future.delayed(Duration(milliseconds: 200)).then((e) {
-  //     setState(() {
-  //       _icons.addAll([
-  //         Icons.ac_unit,
-  //         Icons.airport_shuttle,
-  //         Icons.all_inclusive,
-  //         Icons.beach_access,
-  //         Icons.cake,
-  //         Icons.free_breakfast
-  //       ]);
-  //     });
-  //   });
-  // }
 }

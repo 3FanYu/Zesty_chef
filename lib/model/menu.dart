@@ -1,32 +1,30 @@
 class Menu {
   final int id;
   final String name;
-  final int maximumPeople;
-  final int minimumPeople;
+  // final int maximumPeople;
+  // final int minimumPeople;
   final int price;
   final int stars;
-  final List<MenuDetail> menuDetails;
+  // final List<MenuDetail> menuDetails;
+  final String img;
 
   Menu({
     this.id,
     this.name,
-    this.maximumPeople,
-    this.minimumPeople,
     this.price,
     this.stars,
-    this.menuDetails,
+    this.img,
   });
   factory Menu.fromJson(Map<String, dynamic> parsedJson) {
     return Menu(
-        id: parsedJson['id'],
-        name: parsedJson['name'],
-        maximumPeople: parsedJson['maximum_people'],
-        minimumPeople: parsedJson['minimum_people'],
-        price: parsedJson['price'],
-        stars: parsedJson['stars'],
-        menuDetails: List<MenuDetail>.from(
-                  parsedJson['menu_details'].map((x) => MenuDetail.fromJson(x))),
-        );
+      id: parsedJson['id'],
+      name: parsedJson['name'],
+      // maximumPeople: parsedJson['maximum_people'],
+      // minimumPeople: parsedJson['minimum_people'],
+      price: parsedJson['price'],
+      stars: parsedJson['stars'],
+      img: parsedJson['path'],
+    );
   }
 }
 
