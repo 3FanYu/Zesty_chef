@@ -1,9 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+// import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:zesty_chef/conf/config.inc.dart';
 import 'package:zesty_chef/scoped_model/chef_menu_model.dart';
+import 'package:zesty_chef/tab_home/menu_card.dart';
+import 'package:zesty_chef/upload_menu/add_menu.dart';
 
 import 'package:zesty_chef/widgets/star_rating.dart';
 
@@ -121,6 +126,7 @@ class _NavBarState extends State<HomePage>
                     child: IconButton(
                         icon: Icon(Icons.add),
                         onPressed: () {
+                          loadAssets();
                         }),
                   ),
                 ],
@@ -138,8 +144,7 @@ class _NavBarState extends State<HomePage>
                 itemCount: model.chefMenus[0].menu.length,
                 itemBuilder: (context, index) {
                   return MenuCard(
-                    img: config.imagePath +
-                        model.chefMenus[0].menu[index].img,
+                    img: config.imagePath + model.chefMenus[0].menu[index].img,
                   );
                 },
               ),
@@ -148,6 +153,47 @@ class _NavBarState extends State<HomePage>
         ),
       ),
     );
+  }
+
+  Future<void> loadAssets() async {
+    List<Asset> resultList = List<Asset>();
+    String error = 'No Error Dectected';
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 300,
+        enableCamera: true,
+        // selectedAssets: images,
+        //ios customization
+        cupertinoOptions: CupertinoOptions(
+          takePhotoIcon: "chat",
+        ),
+        //Android customization
+        materialOptions: MaterialOptions(
+          actionBarColor: "#abcdef",
+          actionBarTitle: "Select Photos",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      );
+    } on Exception catch (e) {
+      error = e.toString();
+    }
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+    if (resultList.length > 0) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AddMenu(
+            images: resultList,
+          ),
+        ),
+      );
+    }
   }
 
   @override
