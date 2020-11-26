@@ -126,6 +126,7 @@ class _NavBarState extends State<HomePage>
                     child: IconButton(
                         icon: Icon(Icons.add),
                         onPressed: () {
+                          //開啟圖片選擇器
                           loadAssets();
                         }),
                   ),
@@ -143,6 +144,7 @@ class _NavBarState extends State<HomePage>
                 ),
                 itemCount: model.chefMenus[0].menu.length,
                 itemBuilder: (context, index) {
+                  //顯示所有菜單
                   return MenuCard(
                     img: config.imagePath + model.chefMenus[0].menu[index].img,
                   );
@@ -183,6 +185,7 @@ class _NavBarState extends State<HomePage>
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
+    //沒選擇圖片就不跳頁、反之則跳。
     if (!mounted) return;
     if (resultList.length > 0) {
       Navigator.push(
