@@ -60,24 +60,24 @@ class _BottomNavBarState extends State<BottomNavBar> {
           BottomNavigationBarItem(
             icon: Icon(
               Icons.assignment,
-              color: _selectedIndex == 2 ? Colors.white : Colors.grey,
+              color: _selectedIndex == 1 ? Colors.white : Colors.grey,
             ),
             title: Text(
               'order',
               style: TextStyle(
-                color: _selectedIndex == 2 ? Colors.white : Colors.grey,
+                color: _selectedIndex == 1 ? Colors.white : Colors.grey,
               ),
             ),
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.star,
-              color: _selectedIndex == 3 ? Colors.white : Colors.grey,
+              color: _selectedIndex == 2 ? Colors.white : Colors.grey,
             ),
             title: Text(
               'wish',
               style: TextStyle(
-                color: _selectedIndex == 3 ? Colors.white : Colors.grey,
+                color: _selectedIndex == 2 ? Colors.white : Colors.grey,
               ),
             ),
           ),

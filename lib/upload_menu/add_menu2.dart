@@ -1,9 +1,16 @@
+import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:http/http.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:zesty_chef/model/add_menu.dart';
+import 'package:zesty_chef/scoped_model/add_menu_model.dart';
+import 'package:zesty_chef/service_locator.dart';
+import 'package:http_parser/http_parser.dart';
 
 class AddMenu2 extends StatefulWidget {
   List<Asset> images;
@@ -18,13 +25,17 @@ class AddMenu2 extends StatefulWidget {
 class _AddMenu2State extends State<AddMenu2> {
   int _currentImageIndex = 0;
   List<Asset> get images => widget.images;
+  Map<String, dynamic> get addMenuInfo => widget.addMenuInfo;
   List<TextEditingController> controllers;
+  AddMenuModel addMenuModel;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     controllers = _generateTextController(images.length);
     print(controllers);
+    addMenuModel = locator<AddMenuModel>();
   }
 
   void _updateImageIndex(int index) {
@@ -45,62 +56,83 @@ class _AddMenu2State extends State<AddMenu2> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: HexColor('#F1F1F1'),
-        iconTheme: IconThemeData(
-          color: HexColor('#898888'),
-        ),
-        actions: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(right: 20.0),
-            child: GestureDetector(
-              onTap: () {
-                
-              },
-              child: Icon(
-                Icons.navigate_next,
-                size: 40.0,
+    return ScopedModel<AddMenuModel>(
+      model: addMenuModel,
+      child: ScopedModelDescendant<AddMenuModel>(
+        builder: (BuildContext context, Widget child, AddMenuModel model) {
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: HexColor('#F1F1F1'),
+              iconTheme: IconThemeData(
+                color: HexColor('#898888'),
               ),
+              actions: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(right: 20.0),
+                  child: GestureDetector(
+                    onTap: () async {
+
+                      AddMenuData data = await _collectData();
+                      model.addMenu(data);
+                    },
+                    child: Icon(
+                      Icons.navigate_next,
+                      size: 40.0,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+            body: _buildBody(model),
+          );
+        },
       ),
-      body: _buildBody(),
     );
   }
 
-  Widget _buildBody() {
-    return Column(
+  Widget _buildBody(AddMenuModel model) {
+    return Stack(
       children: [
-        Container(
-          // flex: 40,
-          height: 300,
-          child: Column(
-            children: [
-              Container(
-                // flex: 10,
-                height: 250,
-                child: Card(
-                  child: _buildCarousel(images),
-                ),
+        Column(
+          children: [
+            Container(
+              // flex: 40,
+              height: 300,
+              child: Column(
+                children: [
+                  Container(
+                    // flex: 10,
+                    height: 250,
+                    child: Card(
+                      child: _buildCarousel(images),
+                    ),
+                  ),
+                  Container(
+                    // flex: 2,
+                    height: 50,
+                    child: Container(
+                      child: _buildCarouselIndicator(images),
+                    ),
+                  ),
+                ],
               ),
-              Container(
-                // flex: 2,
-                height: 50,
-                child: Container(
-                  child: _buildCarouselIndicator(images),
-                ),
+            ),
+            Flexible(
+              child: Container(
+                child: _makeBorderTextField(
+                    _currentImageIndex, controllers[_currentImageIndex]),
               ),
-            ],
-          ),
+            )
+          ],
         ),
-        Flexible(
-          child: Container(
-            child: _makeBorderTextField(
-                _currentImageIndex, controllers[_currentImageIndex]),
-          ),
-        )
+        model.isLoading
+            ? Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            : Container()
       ],
     );
   }
@@ -116,7 +148,7 @@ class _AddMenu2State extends State<AddMenu2> {
     }
   }
 
-//生成圖片輪播器下面的圖片
+  //生成圖片輪播器下面的圖片
   Widget _buildCarouselIndicator(List<Asset> images) {
     return Container(
       child: Align(
@@ -195,7 +227,7 @@ class _AddMenu2State extends State<AddMenu2> {
               maxLines: 99,
               textAlign: TextAlign.start,
               decoration: new InputDecoration(
-                hintText: '介紹你的餐點吧...',
+                  hintText: '介紹你的餐點吧...',
                   alignLabelWithHint: true,
                   border: new OutlineInputBorder(
                     borderSide: new BorderSide(color: Colors.teal),
@@ -211,5 +243,65 @@ class _AddMenu2State extends State<AddMenu2> {
         ),
       ],
     );
+  }
+
+  Future<AddMenuData> _collectData() async {
+    String name = addMenuInfo["name"];
+    int cate = 1;
+    int price = int.parse(addMenuInfo["price"]);
+    int maximum = int.parse(addMenuInfo["maximum"]);
+    int minimum = int.parse(addMenuInfo["minimum"]);
+    bool isVege = addMenuInfo["is_vege"];
+    String allergic = addMenuInfo["allergic"];
+    String devices = addMenuInfo["devices"];
+    String ps = addMenuInfo["ps"];
+    List<String> descriptions = _packDescriptions(controllers);
+    var files = await _packImages(images);
+    return AddMenuData(
+      name: name,
+      categoryId: cate,
+      price: price,
+      maximumPeople: maximum,
+      minimumPeople: minimum,
+      isVege: isVege,
+      allergicFood: allergic,
+      devices: devices,
+      postScript: ps,
+      descriptions: descriptions,
+      imageData: files,
+    );
+  }
+
+  Future<List<List<int>>> _packImages(List<Asset> images) async {
+    List<List<int>> paths = new List();
+    for (var i = 0; i < images.length; i++) {
+      ByteData byteData = await images[i].getByteData();
+      List<int> imageData = byteData.buffer.asUint8List();
+      // final buffer = byteData.buffer;
+      var path =
+          await FlutterAbsolutePath.getAbsolutePath(images[i].identifier);
+
+      // MultipartFile multipartFile = await MultipartFile.fromPath(
+      //   'photo',
+      //   path,
+      //   filename: DateTime.now().millisecondsSinceEpoch.toString(),
+      //   contentType: MediaType("image", "jpg"),
+      // );
+      paths.add(imageData);
+
+      // var file =await File(path).writeAsBytes(
+      //     buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+      // files.add(file);
+    }
+    return paths;
+  }
+
+  List<String> _packDescriptions(List<TextEditingController> controllers) {
+    List<String> descriptions = [];
+    controllers.forEach((element) {
+      var desc = element.text.isEmpty ? "" : element.text;
+      descriptions.add(desc);
+    });
+    return descriptions;
   }
 }

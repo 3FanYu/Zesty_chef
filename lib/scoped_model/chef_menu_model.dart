@@ -21,7 +21,7 @@ class ChefMenuModel extends Model {
   void fetchMeals() async {
     try {
       http.Response response =
-          await http.get(conf.apiPath + 'chef/getChefMenu');
+          await http.get(conf.apiPath + 'chef/getChefMenu/3');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // 1. Create a List of Meal
