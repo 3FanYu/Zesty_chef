@@ -11,6 +11,7 @@ import 'package:zesty_chef/model/add_menu.dart';
 import 'package:zesty_chef/scoped_model/add_menu_model.dart';
 import 'package:zesty_chef/service_locator.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:zesty_chef/tab_home/Home.dart';
 
 class AddMenu2 extends StatefulWidget {
   List<Asset> images;
@@ -28,7 +29,6 @@ class _AddMenu2State extends State<AddMenu2> {
   Map<String, dynamic> get addMenuInfo => widget.addMenuInfo;
   List<TextEditingController> controllers;
   AddMenuModel addMenuModel;
-  bool isLoading = false;
 
   @override
   void initState() {
@@ -71,7 +71,6 @@ class _AddMenu2State extends State<AddMenu2> {
                   padding: EdgeInsets.only(right: 20.0),
                   child: GestureDetector(
                     onTap: () async {
-
                       AddMenuData data = await _collectData();
                       model.addMenu(data);
                     },
@@ -83,14 +82,19 @@ class _AddMenu2State extends State<AddMenu2> {
                 ),
               ],
             ),
-            body: _buildBody(model),
+            body: _buildBody(model, context),
           );
         },
       ),
     );
   }
 
-  Widget _buildBody(AddMenuModel model) {
+  Widget _buildBody(AddMenuModel model, BuildContext context) {
+    // if (model.isLoading == false && model.result == "success") {
+    //   Navigator.popUntil(context, ModalRoute.withName('/home'));
+    // } else if (model.isLoading == false && model.result == "failed") {
+    //   Scaffold.of(context).showSnackBar(SnackBar(content: Text('failed')));
+    // }
     return Stack(
       children: [
         Column(
@@ -132,7 +136,32 @@ class _AddMenu2State extends State<AddMenu2> {
                   child: CircularProgressIndicator(),
                 ),
               )
-            : Container()
+            : Container(),
+        model.result == "success"
+            ? AlertDialog(
+                title: Text(
+                  model.result,
+                  style: Theme.of(context).textTheme.title,
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.popUntil(context, ModalRoute.withName(HomePage().routeName));
+                      // Navigator.pop(context);
+                      // Navigator.of(context).pushNamed('home');
+                    },
+                    child: Text(
+                      "點我回選單",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ],
+                content: Text(
+                  model.result,
+                  style: Theme.of(context).textTheme.body1,
+                ),
+              )
+            : AlertDialog(),
       ],
     );
   }

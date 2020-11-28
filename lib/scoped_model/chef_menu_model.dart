@@ -3,7 +3,6 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:zesty_chef/conf/config.inc.dart';
 import 'package:zesty_chef/model/chef_menu.dart';
-import 'package:zesty_chef/model/menu.dart';
 
 class ChefMenuModel extends Model {
   List<ChefMenu> _chefMenus = [];

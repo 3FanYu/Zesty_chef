@@ -14,11 +14,19 @@ import 'package:zesty_chef/widgets/star_rating.dart';
 
 import '../service_locator.dart';
 
-class HomePage extends StatefulWidget {
+mixin NamedRoute implements Widget {
+  String get routeName;
+}
+
+class HomePage extends StatefulWidget with NamedRoute {
   HomePage({Key key}) : super(key: key);
 
   @override
   _NavBarState createState() => _NavBarState();
+
+  @override
+  // TODO: implement routeName
+  String get routeName => '/';
 }
 
 class _NavBarState extends State<HomePage>
