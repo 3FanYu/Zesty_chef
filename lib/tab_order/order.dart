@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:zesty_chef/tab_order/order_coming_soon.dart';
+import 'package:zesty_chef/tab_order/order_completed.dart';
+import 'package:zesty_chef/tab_order/order_pending.dart';
 
 class OrderPage extends StatefulWidget {
   OrderPage({Key key}) : super(key: key);
@@ -44,9 +47,9 @@ class _NavBarState extends State<OrderPage> {
           ),
           body: TabBarView(
             children: [
-              Icon(Icons.local_laundry_service),
-              Icon(Icons.ac_unit),
-              Icon(Icons.do_not_disturb),
+              OrderPending(),
+              OrderComingSoon(),
+              OrderCompleted(),
             ],
           ),
         ),
