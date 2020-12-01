@@ -2,9 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hexcolor/hexcolor.dart';
 
+import 'package:zesty_chef/conf/config.inc.dart';
+import 'package:zesty_chef/model/order.dart';
+import 'package:zesty_chef/scoped_model/order_model.dart';
+import 'package:zesty_chef/widgets/star_rating.dart';
+
 class OrderCard extends StatelessWidget {
   final int cardType;
-  const OrderCard({Key key, @required this.cardType}) : super(key: key);
+  final Order orderData;
+  final OrderModel model;
+  Conf config = new Conf();
+  OrderCard({Key key, this.cardType, this.orderData, this.model})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +23,8 @@ class OrderCard extends StatelessWidget {
       return _builComingCard();
     } else if (cardType == 3) {
       return _builCompletedCard();
-    }
+    } else
+      return Text('error');
   }
 
 //建構待確認卡片
@@ -31,7 +41,7 @@ class OrderCard extends StatelessWidget {
             new Container(
               padding: const EdgeInsets.all(10.0),
               child: Image.network(
-                'https://scontent.frmq2-1.fna.fbcdn.net/v/t1.15752-9/s1080x2048/127186554_135161574736988_6575687442504209669_n.jpg?_nc_cat=110&ccb=2&_nc_sid=ae9488&_nc_ohc=dyo5UZ2T5xEAX9Uj61E&_nc_oc=AQnmdBnkWtTprf_yA98IZAPw81O6Eg2IvlJogl53HqW9Awp3Jc1U5UJhX6bY8KeTzEg&_nc_ht=scontent.frmq2-1.fna&tp=7&oh=51af49149c90906ad375e9a0bcdc610a&oe=5FE7949B',
+                config.imagePath + orderData.path,
                 height: 100,
                 width: 100,
                 fit: BoxFit.cover,
@@ -47,18 +57,18 @@ class OrderCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '菜名',
+                        orderData.name,
                         style: TextStyle(
                           fontSize: 18,
                         ),
                       ),
                       Text(
-                        '臺中市北屯區大里路太平巷田中弄69號',
+                        orderData.address,
                         style: TextStyle(
                             color: Colors.black.withOpacity(0.5), fontSize: 10),
                       ),
                       Text(
-                        '2020/08/26(二)18:00',
+                        orderData.datetime,
                         style: TextStyle(
                             color: Colors.black.withOpacity(0.5), fontSize: 10),
                       ),
@@ -81,7 +91,7 @@ class OrderCard extends StatelessWidget {
                                   style: TextStyle(fontSize: 10),
                                 ),
                                 onPressed: () {
-                                  print('object');
+                                  model.acceptOrder(orderData.id);
                                 },
                               ),
                             ),
@@ -95,7 +105,7 @@ class OrderCard extends StatelessWidget {
                                   style: TextStyle(fontSize: 10),
                                 ),
                                 onPressed: () {
-                                  print('object');
+                                  model.denyOrder(orderData.id);
                                 },
                               ),
                             ),
@@ -104,7 +114,7 @@ class OrderCard extends StatelessWidget {
                               child: Column(
                                 children: [
                                   Text(
-                                    '\$998',
+                                    '\$' + orderData.price.toString(),
                                     style: TextStyle(fontSize: 12),
                                   ),
                                   Row(
@@ -112,7 +122,7 @@ class OrderCard extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        '2',
+                                        orderData.count.toString(),
                                         style: TextStyle(fontSize: 12),
                                       ),
                                       Icon(
@@ -128,7 +138,9 @@ class OrderCard extends StatelessWidget {
                                     thickness: 2,
                                   ),
                                   Text(
-                                    '\$1996',
+                                    '\$' +
+                                        (orderData.price * orderData.count)
+                                            .toString(),
                                     style: TextStyle(fontSize: 12),
                                   )
                                 ],
@@ -162,7 +174,7 @@ class OrderCard extends StatelessWidget {
             new Container(
               padding: const EdgeInsets.all(10.0),
               child: Image.network(
-                'https://scontent.frmq2-1.fna.fbcdn.net/v/t1.15752-9/s1080x2048/127186554_135161574736988_6575687442504209669_n.jpg?_nc_cat=110&ccb=2&_nc_sid=ae9488&_nc_ohc=dyo5UZ2T5xEAX9Uj61E&_nc_oc=AQnmdBnkWtTprf_yA98IZAPw81O6Eg2IvlJogl53HqW9Awp3Jc1U5UJhX6bY8KeTzEg&_nc_ht=scontent.frmq2-1.fna&tp=7&oh=51af49149c90906ad375e9a0bcdc610a&oe=5FE7949B',
+                config.imagePath + orderData.path,
                 height: 100,
                 width: 100,
                 fit: BoxFit.cover,
@@ -178,18 +190,18 @@ class OrderCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '菜名',
+                        orderData.name,
                         style: TextStyle(
                           fontSize: 18,
                         ),
                       ),
                       Text(
-                        '臺中市北屯區大里路太平巷田中弄69號',
+                        orderData.address,
                         style: TextStyle(
                             color: Colors.black.withOpacity(0.5), fontSize: 10),
                       ),
                       Text(
-                        '2020/08/26(二)18:00',
+                        orderData.datetime,
                         style: TextStyle(
                             color: Colors.black.withOpacity(0.5), fontSize: 10),
                       ),
@@ -207,7 +219,7 @@ class OrderCard extends StatelessWidget {
                               child: Column(
                                 children: [
                                   Text(
-                                    '\$998',
+                                    '\$' + orderData.price.toString(),
                                     style: TextStyle(fontSize: 12),
                                   ),
                                   Row(
@@ -215,7 +227,7 @@ class OrderCard extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        '2',
+                                        orderData.count.toString(),
                                         style: TextStyle(fontSize: 12),
                                       ),
                                       Icon(
@@ -231,7 +243,9 @@ class OrderCard extends StatelessWidget {
                                     thickness: 2,
                                   ),
                                   Text(
-                                    '\$1996',
+                                    '\$' +
+                                        (orderData.price * orderData.count)
+                                            .toString(),
                                     style: TextStyle(fontSize: 12),
                                   )
                                 ],
@@ -265,7 +279,7 @@ class OrderCard extends StatelessWidget {
             new Container(
               padding: const EdgeInsets.all(10.0),
               child: Image.network(
-                'https://scontent.frmq2-1.fna.fbcdn.net/v/t1.15752-9/s1080x2048/127186554_135161574736988_6575687442504209669_n.jpg?_nc_cat=110&ccb=2&_nc_sid=ae9488&_nc_ohc=dyo5UZ2T5xEAX9Uj61E&_nc_oc=AQnmdBnkWtTprf_yA98IZAPw81O6Eg2IvlJogl53HqW9Awp3Jc1U5UJhX6bY8KeTzEg&_nc_ht=scontent.frmq2-1.fna&tp=7&oh=51af49149c90906ad375e9a0bcdc610a&oe=5FE7949B',
+                config.imagePath + orderData.path,
                 height: 100,
                 width: 100,
                 fit: BoxFit.cover,
@@ -281,18 +295,18 @@ class OrderCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '菜名',
+                        orderData.name,
                         style: TextStyle(
                           fontSize: 18,
                         ),
                       ),
                       Text(
-                        '臺中市北屯區大里路太平巷田中弄69號',
+                        orderData.address,
                         style: TextStyle(
                             color: Colors.black.withOpacity(0.5), fontSize: 10),
                       ),
                       Text(
-                        '2020/08/26(二)18:00',
+                        orderData.datetime,
                         style: TextStyle(
                             color: Colors.black.withOpacity(0.5), fontSize: 10),
                       ),
@@ -310,7 +324,7 @@ class OrderCard extends StatelessWidget {
                               child: Column(
                                 children: [
                                   Text(
-                                    '\$998',
+                                    orderData.price.toString(),
                                     style: TextStyle(fontSize: 12),
                                   ),
                                   Row(
@@ -318,7 +332,7 @@ class OrderCard extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        '2',
+                                        orderData.count.toString(),
                                         style: TextStyle(fontSize: 12),
                                       ),
                                       Icon(
@@ -334,7 +348,9 @@ class OrderCard extends StatelessWidget {
                                     thickness: 2,
                                   ),
                                   Text(
-                                    '\$1996',
+                                    '\$' +
+                                        (orderData.price * orderData.count)
+                                            .toString(),
                                     style: TextStyle(fontSize: 12),
                                   )
                                 ],
@@ -342,6 +358,10 @@ class OrderCard extends StatelessWidget {
                             ),
                           ],
                         ),
+                      ),
+                      StarRating(
+                        starCount: 5,
+                        rating: orderData.star.toDouble(),
                       ),
                     ],
                   ),

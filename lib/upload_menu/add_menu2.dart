@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -139,16 +138,24 @@ class _AddMenu2State extends State<AddMenu2> {
             : Container(),
         model.result == "success"
             ? AlertDialog(
-                title: Text(
-                  model.result,
-                  style: Theme.of(context).textTheme.title,
+                title: Column(
+                  children: [
+                    Icon(
+                      Icons.check,
+                      size: 40,
+                      color: HexColor('#57AE80'),
+                    ),
+                    Text(
+                      model.result,
+                      style: Theme.of(context).textTheme.title,
+                    ),
+                  ],
                 ),
                 actions: <Widget>[
                   FlatButton(
                     onPressed: () {
-                      Navigator.popUntil(context, ModalRoute.withName(HomePage().routeName));
-                      // Navigator.pop(context);
-                      // Navigator.of(context).pushNamed('home');
+                      Navigator.popUntil(
+                          context, ModalRoute.withName(HomePage().routeName));
                     },
                     child: Text(
                       "點我回選單",
@@ -156,10 +163,6 @@ class _AddMenu2State extends State<AddMenu2> {
                     ),
                   ),
                 ],
-                content: Text(
-                  model.result,
-                  style: Theme.of(context).textTheme.body1,
-                ),
               )
             : AlertDialog(),
       ],
@@ -307,9 +310,6 @@ class _AddMenu2State extends State<AddMenu2> {
       ByteData byteData = await images[i].getByteData();
       List<int> imageData = byteData.buffer.asUint8List();
       // final buffer = byteData.buffer;
-      var path =
-          await FlutterAbsolutePath.getAbsolutePath(images[i].identifier);
-
       // MultipartFile multipartFile = await MultipartFile.fromPath(
       //   'photo',
       //   path,
