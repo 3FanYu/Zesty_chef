@@ -38,6 +38,7 @@ class OrderModel extends Model {
         };
         // 2. Decode the response body
         Map<String, dynamic> map = jsonDecode(response.body);
+        print(jsonDecode(response.body));
         List<dynamic> responseData = map['data'];
         // 3. Iterate through all the users in the list
         responseData?.forEach((dynamic orderData) {

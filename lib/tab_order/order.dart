@@ -87,14 +87,14 @@ class _NavBarState extends State<OrderPage> {
             ),
           ),
         ),
-        model.isLoading
-            ? Container(
-                color: Colors.black.withOpacity(0.5),
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              )
-            : Container(),
+        // model.isLoading
+        //     ? Container(
+        //         color: Colors.black.withOpacity(0.5),
+        //         child: Center(
+        //           child: CircularProgressIndicator(),
+        //         ),
+        //       )
+        //     : Container(),
       ],
     );
   }

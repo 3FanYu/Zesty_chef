@@ -55,7 +55,7 @@ class _NavBarState extends State<HomePage>
             );
           } else if (!model.isLoading && model.chefMenus.length > 0) {
             content = _buildHomeBody(model);
-            keepAlive = true;
+            keepAlive = false;
             updateKeepAlive();
           } else if (!model.isLoading && model.chefMenus.length == 0) {
             keepAlive = false;
