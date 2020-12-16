@@ -77,10 +77,10 @@ class OrderCard extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              '剩餘3日',
-                              style: TextStyle(color: Colors.red, fontSize: 14),
-                            ),
+                            // Text(
+                            //   '剩餘' + orderData.daysLeft.toString() + '日',
+                            //   style: TextStyle(color: Colors.red, fontSize: 14),
+                            // ),
                             ButtonTheme(
                               minWidth: 1,
                               height: 1,
@@ -211,7 +211,7 @@ class OrderCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '剩餘3日',
+                              '剩餘' + orderData.daysLeft.toString() + '日',
                               style: TextStyle(color: Colors.red, fontSize: 14),
                             ),
                             SizedBox(
@@ -316,7 +316,7 @@ class OrderCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '剩餘3日',
+                              '剩餘' + orderData.daysLeft.toString() + '日',
                               style: TextStyle(color: Colors.red, fontSize: 14),
                             ),
                             SizedBox(

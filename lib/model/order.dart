@@ -10,6 +10,7 @@ class Order {
   final int menuId;
   final String path;
   final int star;
+  final int daysLeft;
   Order({
     this.name,
     this.id,
@@ -22,6 +23,7 @@ class Order {
     this.menuId,
     this.path,
     this.star,
+    this.daysLeft,
   });
   factory Order.fromJson(dynamic data) {
     return Order(
@@ -36,6 +38,7 @@ class Order {
       menuId: data['menu_id'],
       path: data['path'],
       star: data['stars'],
+      daysLeft: data['days_left'],
     );
   }
 }
